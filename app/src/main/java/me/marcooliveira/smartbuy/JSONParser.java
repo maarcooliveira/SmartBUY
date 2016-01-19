@@ -46,9 +46,14 @@ public class JSONParser {
         for(int i = 0; i < jsonProductList.length(); i++) {
             JSONObject jsonProduct = jsonProductList.getJSONObject(i);
 
+            String name = jsonProduct.getString(NAME);
+            String manufacturer = jsonProduct.getString(MANUFACTURER);
+            String manufacturer_in_name = manufacturer + " - ";
+            name = name.replaceAll(manufacturer_in_name, "");
+
             Product p = new Product();
-            p.setName(jsonProduct.getString(NAME));
-            p.setManufacturer(jsonProduct.getString(MANUFACTURER));
+            p.setName(name);
+            p.setManufacturer(manufacturer);
             p.setLongDescription(jsonProduct.getString(DESCRIPTION));
             p.setSku(jsonProduct.getString(SKU));
             p.setSalePrice(jsonProduct.getDouble(SALE));

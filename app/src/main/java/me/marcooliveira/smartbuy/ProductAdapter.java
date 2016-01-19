@@ -8,6 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.koushikdutta.ion.Ion;
+
 import java.util.ArrayList;
 
 /**
@@ -32,7 +34,12 @@ public class ProductAdapter extends ArrayAdapter<Product> {
         TextView manufacturer = (TextView) rowView.findViewById(R.id.product_list_manufacturer);
         TextView price = (TextView) rowView.findViewById(R.id.product_list_price);
 
-        //TODO: insert image into layout
+        // Ion lib for image download and cache https://github.com/koush/ion
+        Ion.with(image)
+                .placeholder(R.mipmap.smartphone)
+                .error(R.mipmap.smartphone)
+                .load(data.get(position).getImage());
+
         name.setText(data.get(position).getName());
         manufacturer.setText(data.get(position).getManufacturer());
         price.setText("$" + data.get(position).getSalePrice().toString());

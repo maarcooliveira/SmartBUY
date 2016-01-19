@@ -19,6 +19,10 @@ public class Product implements Serializable {
     private String height;
     private String weight;
 
+    public Product() {
+
+    }
+
     public Product(String sku, String name, String manufacturer, String image, Double salePrice) {
         this.sku = sku;
         this.name = name;
@@ -84,5 +88,53 @@ public class Product implements Serializable {
 
     public String getWeight() {
         return weight;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setManufacturer(String manufacturer) {
+        this.manufacturer = manufacturer;
+    }
+
+    public void setLongDescription(String longDescription) {
+        this.longDescription = longDescription;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
+
+    public void setSalePrice(Double salePrice) {
+        this.salePrice = salePrice;
+    }
+
+    public void setRegularPrice(Double regularPrice) {
+        this.regularPrice = regularPrice;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public void setCustomerReviewAverage(String customerReviewAverage) {
+        this.customerReviewAverage = customerReviewAverage;
+    }
+
+    public void setWidth(String width) {
+        this.width = width;
+    }
+
+    public void setHeight(String height) {
+        this.height = height;
+    }
+
+    public void setWeight(String weight) {
+        this.weight = weight;
     }
 }

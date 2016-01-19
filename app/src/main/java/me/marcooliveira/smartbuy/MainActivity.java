@@ -4,6 +4,7 @@ import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     FragmentManager fm = getFragmentManager();
     ProductAdapter productAdapter;
     DetailFragment detailFragment;
+    FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,23 +43,30 @@ public class MainActivity extends AppCompatActivity {
         ListView productList = (ListView) findViewById(R.id.product_list_view);
         productList.setAdapter(productAdapter);
 
+        fab = (FloatingActionButton) findViewById(R.id.share_fab);
+        fab.setVisibility(View.GONE);
+        detailFragment = (DetailFragment) getFragmentManager().findFragmentById(R.id.details_fragment);
+
         productList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Product p = (Product) parent.getItemAtPosition(position);
+                Product p = (Product) parent.getItemAtPosition(position);
 
-            detailFragment = (DetailFragment) getFragmentManager().findFragmentById(R.id.details_fragment);
-
-            if (detailFragment == null || !detailFragment.isInLayout()) {
-                Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
-                intent.putExtra("product", p);
-                startActivity(intent);
-            } else {
-                detailFragment.updateInfo(p);
-
-            }
-
+                if (detailFragment == null || !detailFragment.isInLayout()) {
+                    Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
+                    intent.putExtra("product", p);
+                    startActivity(intent);
+                } else {
+                    detailFragment.updateInfo(p);
+                    fab.setVisibility(View.VISIBLE);
+                    fab.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            detailFragment.share();
+                        }
+                    });
+                }
             }
         });
 
@@ -87,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Couldn't load. Try again later.",
                         Toast.LENGTH_LONG).show();
             }
+                //TODO: add a progress bar
 //            findViewById(R.id.progressbar).setVisibility(View.GONE);
         }
 

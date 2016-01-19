@@ -2,7 +2,12 @@ package me.marcooliveira.smartbuy;
 
 import android.app.Dialog;
 import android.app.Fragment;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +15,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
 
@@ -55,6 +63,9 @@ public class DetailFragment extends Fragment {
         manufacturer.setText("by " + product.getManufacturer());
         price.setText("$" + product.getSalePrice().toString());
         description.setText(product.getLongDescription());
+        width.setText(product.getWidth());
+        height.setText(product.getHeight());
+        weight.setText(product.getWeight());
 
         Ion.with(image)
                 .placeholder(R.mipmap.smartphone)
@@ -83,5 +94,31 @@ public class DetailFragment extends Fragment {
                 dialog.dismiss();
             }
         });
+    }
+
+    public void share() {
+        try {
+            File sdCard = Environment.getExternalStorageDirectory();
+            File appDir = new File(sdCard + "/me.marcooliveira.smartbuy");
+            appDir.mkdirs();
+            File file = new File(appDir, "share.jpg");
+            FileOutputStream fos = new FileOutputStream(file);
+            Bitmap bitmap = Ion.with(image).getBitmap();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 95, fos);
+            startSharingIntent(file.getPath(),"Hey, look what I found with SmartBUY!");
+        }
+        catch(Exception e) {
+            Log.d("SmartBUY", e.toString());
+        }
+    }
+
+    private void startSharingIntent(String imagePath,String text) {
+
+        Intent share = new Intent(Intent.ACTION_SEND);
+        share.setType("image/jpeg");
+        share.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(imagePath)));
+        share.putExtra(Intent.EXTRA_SUBJECT, text);
+        share.putExtra(Intent.EXTRA_TEXT,text);
+        startActivity(Intent.createChooser(share, "Share Image"));
     }
 }

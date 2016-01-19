@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -29,23 +30,36 @@ public class MainActivity extends AppCompatActivity {
     ProductAdapter productAdapter;
     DetailFragment detailFragment;
     FloatingActionButton fab;
+    SwipeRefreshLayout swipeContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        final ArrayList<Product> products = new ArrayList<>();
-
-        productAdapter = new ProductAdapter(this, products);
-        ListView productList = (ListView) findViewById(R.id.product_list_view);
-        productList.setAdapter(productAdapter);
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                GetList updater = new GetList();
+                updater.execute();
+            }
+        });
 
         fab = (FloatingActionButton) findViewById(R.id.share_fab);
-        fab.setVisibility(View.GONE);
+        if (fab != null) {
+            fab.setVisibility(View.GONE);
+        }
+
         detailFragment = (DetailFragment) getFragmentManager().findFragmentById(R.id.details_fragment);
+
+        final ArrayList<Product> products = new ArrayList<>();
+        ListView productList = (ListView) findViewById(R.id.product_list_view);
+        productAdapter = new ProductAdapter(this, products);
+        productList.setAdapter(productAdapter);
 
         productList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -69,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
+        swipeContainer.setRefreshing(true);
         GetList updater = new GetList();
         updater.execute();
     }
@@ -96,8 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Couldn't load. Try again later.",
                         Toast.LENGTH_LONG).show();
             }
-                //TODO: add a progress bar
-//            findViewById(R.id.progressbar).setVisibility(View.GONE);
+            swipeContainer.setRefreshing(false);
         }
 
 
@@ -113,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
             String format = "json";
             String apiKey = "ujp4vduqppje2d6qvegh2hzz";
             ArrayList<Product> response;
-
 
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;

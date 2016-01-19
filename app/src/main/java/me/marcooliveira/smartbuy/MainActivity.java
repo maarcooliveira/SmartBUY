@@ -7,8 +7,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -28,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
     FragmentManager fm = getFragmentManager();
     ProductAdapter productAdapter;
+    DetailFragment detailFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,13 +37,6 @@ public class MainActivity extends AppCompatActivity {
 
         final ArrayList<Product> products = new ArrayList<>();
 
-        products.add(new Product("000", "iPhone 6S", "Apple", "img", 699.00));
-        products.add(new Product("001", "iPhone 6", "Apple", "img", 599.00));
-        products.add(new Product("002", "iPhone 5S", "Apple", "img", 499.00));
-        products.add(new Product("003", "iPhone 5", "Apple", "img", 399.00));
-        products.add(new Product("004", "iPhone 4S", "Apple", "img", 299.00));
-
-
         productAdapter = new ProductAdapter(this, products);
         ListView productList = (ListView) findViewById(R.id.product_list_view);
         productList.setAdapter(productAdapter);
@@ -53,60 +45,30 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Product p = (Product) parent.getItemAtPosition(position);
-                DetailFragment detailFragment = (DetailFragment) getFragmentManager().findFragmentById(R.id.details_fragment);
+            Product p = (Product) parent.getItemAtPosition(position);
 
-                if (detailFragment == null || !detailFragment.isInLayout()) {
-                    Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
-                    intent.putExtra("product", p);
-                    startActivity(intent);
-                } else {
-                    detailFragment.updateInfo(p);
-                }
+            detailFragment = (DetailFragment) getFragmentManager().findFragmentById(R.id.details_fragment);
+
+            if (detailFragment == null || !detailFragment.isInLayout()) {
+                Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
+                intent.putExtra("product", p);
+                startActivity(intent);
+            } else {
+                detailFragment.updateInfo(p);
+
+            }
 
             }
         });
 
         GetList updater = new GetList();
         updater.execute();
-
-
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
 
-
-
-
+    public void showZoomFragment(View v) {
+        detailFragment.showZoomFragment(v);
+    }
 
 
     public class GetList extends AsyncTask<String, Void, ArrayList<Product>> {
@@ -122,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
             }
             else{
                 //TODO: use a Snackbar instead
-                Toast.makeText(getApplicationContext(), "Couldn't load. Try a new location or refresh",
+                Toast.makeText(getApplicationContext(), "Couldn't load. Try again later.",
                         Toast.LENGTH_LONG).show();
             }
 //            findViewById(R.id.progressbar).setVisibility(View.GONE);

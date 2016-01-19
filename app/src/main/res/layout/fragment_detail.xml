@@ -1,19 +1,146 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".DetailFragment"
-    tools:showIn="@layout/activity_detail">
+    tools:showIn="@layout/activity_detail"
+    android:background="#FFF">
 
-    <TextView
-        android:id="@+id/detail_text"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Ola mundo!"
-        android:textSize="70sp"/>
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin">
 
-</RelativeLayout>
+        <ImageView
+            android:id="@+id/product_detail_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFF"
+            android:paddingTop="15dp"
+            android:minHeight="250dp"
+            android:paddingBottom="15dp"
+            android:onClick="showZoomFragment"/>
+
+        <TextView
+            android:id="@+id/product_detail_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="sans-serif-light"
+            android:textSize="24sp"
+            android:textColor="@color/colorPrimary"
+            android:layout_below="@id/product_detail_image"
+            android:text="iPhone 6S" />
+
+        <TextView
+            android:id="@+id/product_detail_manufacturer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:fontFamily="sans-serif-light"
+            android:textSize="18sp"
+            android:layout_below="@id/product_detail_name"
+            android:text="by Apple"
+            />
+
+        <TextView
+            android:id="@+id/product_detail_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-black"
+            android:textSize="22sp"
+            android:textColor="@color/colorAccent"
+            android:layout_below="@id/product_detail_manufacturer"
+            android:layout_alignParentRight="true"
+            android:text="$699" />
+
+        <TextView
+            android:id="@+id/description_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:fontFamily="sans-serif-black"
+            android:textSize="20sp"
+            android:layout_below="@id/product_detail_price"
+            android:textAllCaps="true"
+            android:text="@string/description" />
+
+        <TextView
+            android:id="@+id/product_detail_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="sans-serif-light"
+            android:textSize="20sp"
+            android:layout_below="@id/description_label"
+            android:layout_alignParentRight="true"
+            android:text="@string/lorem" />
+
+        <TextView
+            android:id="@+id/width_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:fontFamily="sans-serif"
+            android:textSize="18sp"
+            android:layout_below="@id/product_detail_description"
+            android:textAllCaps="true"
+            android:text="@string/width" />
+
+        <TextView
+            android:id="@+id/product_detail_width"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:fontFamily="sans-serif-light"
+            android:textSize="16sp"
+            android:layout_below="@id/width_label"
+            android:text="" />
+
+        <TextView
+            android:id="@+id/height_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:fontFamily="sans-serif"
+            android:textSize="18sp"
+            android:layout_below="@id/product_detail_width"
+            android:textAllCaps="true"
+            android:text="@string/height" />
+
+        <TextView
+            android:id="@+id/product_detail_height"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:fontFamily="sans-serif-light"
+            android:textSize="16sp"
+            android:layout_below="@id/height_label"
+            android:text="" />
+
+        <TextView
+            android:id="@+id/weight_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:fontFamily="sans-serif"
+            android:textSize="18sp"
+            android:layout_below="@id/product_detail_height"
+            android:textAllCaps="true"
+            android:text="@string/weight" />
+
+        <TextView
+            android:id="@+id/product_detail_weight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:fontFamily="sans-serif-light"
+            android:textSize="16sp"
+            android:layout_below="@id/weight_label"
+            android:text="" />
+
+    </RelativeLayout>
+</ScrollView>

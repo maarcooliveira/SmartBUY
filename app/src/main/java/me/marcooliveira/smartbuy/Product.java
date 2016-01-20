@@ -20,26 +20,6 @@ public class Product implements Serializable {
     private String weight;
 
     public Product() {
-
-    }
-
-    public Product(String sku, String name, String manufacturer, String image, Double salePrice) {
-        this.sku = sku;
-        this.name = name;
-        this.manufacturer = manufacturer;
-        this.image = image;
-        this.salePrice = salePrice;
-    }
-
-    public void addDetails(String longDescription, Double regularPrice, String url,
-                           String customerReviewAverage, String width, String height, String weight ) {
-        this.longDescription = longDescription;
-        this.regularPrice = regularPrice;
-        this.url = url;
-        this.customerReviewAverage = customerReviewAverage;
-        this.width = width;
-        this.height = height;
-        this.weight = weight;
     }
 
     public String getName() {

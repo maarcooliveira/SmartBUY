@@ -40,13 +40,16 @@ public class MainActivity extends AppCompatActivity {
 
         snackbarCoordinator = (CoordinatorLayout)findViewById(R.id.snackbar_coordinator);
 
+        // Hide FAB while no product is selected
         fab = (FloatingActionButton) findViewById(R.id.share_fab);
         if (fab != null) {
             fab.setVisibility(View.GONE);
         }
 
+        // Get the detail fragment when using large screens
         detailFragment = (DetailFragment) getFragmentManager().findFragmentById(R.id.details_fragment);
 
+        // Listener for the pull to refresh functionality
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -58,11 +61,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Product list and adapter configuration
         final ArrayList<Product> products = new ArrayList<>();
         final ListView productList = (ListView) findViewById(R.id.product_list_view);
         productAdapter = new ProductAdapter(this, products);
         productList.setAdapter(productAdapter);
 
+        // Scroll listener for infinite scroll
         productList.setOnScrollListener(new InfiniteScrollListener(5) {
             @Override
             public void loadMore(int page, int totalItemsCount) {
@@ -71,24 +76,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // List item click listener
         productList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Product p = (Product) parent.getItemAtPosition(position);
 
+                // Get the previous selected item; set the new selection
                 View lastSelected = productAdapter.getLastSelected();
                 productAdapter.setLastSelected(view);
                 productAdapter.setLastSelectedIdx(position);
 
-//                Log.d("ALOALOALO"));
-
+                // Change the selection indicator color to transparent if it still is visible
                 if (lastSelected != null) {
                     lastSelected.findViewById(R.id.product_list_selected).setBackgroundColor(getResources().getColor(R.color.transparent));
                 }
+                // Change de selection indicator color to the accent color in the selected item
                 View selected = view.findViewById(R.id.product_list_selected);
                 selected.setBackgroundColor(getResources().getColor(R.color.colorAccent));
 
+                /* If the fragment was not found, it is a small/medium device --> start DetailActivity;
+                *  Otherwise, update the fragment info and make the share FAB visible */
                 if (detailFragment == null || !detailFragment.isInLayout()) {
                     Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
                     intent.putExtra("product", p);
@@ -106,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Get the first page of products
         swipeContainer.setRefreshing(true);
         GetList updater = new GetList();
         updater.execute("1");
@@ -116,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
         detailFragment.showZoomFragment(v);
     }
 
-
+    // AsyncTask to get a page of products
     public class GetList extends AsyncTask<String, Void, ArrayList<Product>> {
         boolean isUpdate = false;
         Snackbar snack_update;
@@ -127,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
             snack_update.dismiss();
 
             if(products != null){
+                // Empty the adapter if the pull to refresh was used
                 if (isUpdate)
                     productAdapter.clear();
                 for(int i = 0; i < products.size(); i++){
@@ -134,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             else{
+                // "error" snackbar configuration with a refresh button
                 Snackbar snackbar = Snackbar.make(snackbarCoordinator, getResources().getString(R.string.error), Snackbar.LENGTH_INDEFINITE);
                 snackbar.setAction("REFRESH", new View.OnClickListener() {
                     @Override
@@ -147,13 +158,23 @@ public class MainActivity extends AppCompatActivity {
             swipeContainer.setRefreshing(false);
         }
 
-
         @Override
         protected ArrayList<Product> doInBackground(String... params) {
             if (params[0].equals("1")) {
                 isUpdate = true;
             }
 
+            // "loading" snackbar configuration
+            snack_update = Snackbar.make(snackbarCoordinator, getResources().getString(R.string.loading), Snackbar.LENGTH_SHORT);
+            snack_update.setAction("OK", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    snack_update.dismiss();
+                }
+            });
+            snack_update.show();
+
+            // URL configuration for the BestBuy API call
             String baseUrl = "http://api.bestbuy.com/v1/products";
             String categories = "pcmcat209400050001,pcmcat156400050037";
             String show = "name,manufacturer,longDescription,sku,salePrice,regularPrice,image," +
@@ -166,19 +187,9 @@ public class MainActivity extends AppCompatActivity {
 
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
-            String jsonResponse = null;
-
-            snack_update = Snackbar.make(snackbarCoordinator, getResources().getString(R.string.loading), Snackbar.LENGTH_SHORT);
-            snack_update.setAction("OK", new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    snack_update.dismiss();
-                }
-            });
-            snack_update.show();
+            String jsonResponse;
 
             try {
-
                 URL url = new URL(baseUrl
                         + "(categoryPath.id%20in%20(" + categories + "))"
                         + "?show=" + show
@@ -199,8 +210,8 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 reader = new BufferedReader(new InputStreamReader(inputStream));
-
                 String line;
+
                 while ((line = reader.readLine()) != null) {
                     buffer.append(line + "\n");
                 }
@@ -211,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
 
                 jsonResponse = buffer.toString();
 
-                /* Parse the JSON data to return an array of Product objects */
+                // Parse the JSON data to return an array of Product objects
                 JSONParser parser = new JSONParser();
                 response = parser.parseJSONData(jsonResponse);
 

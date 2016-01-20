@@ -23,7 +23,7 @@ import java.io.FileOutputStream;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
- * A placeholder fragment containing a simple view.
+ * Fragment to show details of products
  */
 public class DetailFragment extends Fragment {
     TextView name;
@@ -65,6 +65,7 @@ public class DetailFragment extends Fragment {
         return view;
     }
 
+    // Update the product info when a new product is selected from the list
     public void updateInfo(Product product) {
         description_container.setVisibility(View.VISIBLE);
         default_container.setVisibility(View.GONE);
@@ -77,6 +78,7 @@ public class DetailFragment extends Fragment {
         height.setText(product.getHeight());
         weight.setText(product.getWeight());
 
+        // Ion library to load the image from cache
         Ion.with(image)
                 .placeholder(R.mipmap.smartphone)
                 .error(R.mipmap.smartphone)
@@ -84,6 +86,7 @@ public class DetailFragment extends Fragment {
         this.p = product;
     }
 
+    // Show the image zoom fragment as a dialog
     public void showZoomFragment(View v) {
         dialog = new Dialog(v.getContext(), android.R.style.Theme_Light_NoTitleBar_Fullscreen);
         dialog.setContentView(R.layout.image_zoom);
@@ -106,6 +109,7 @@ public class DetailFragment extends Fragment {
         });
     }
 
+    // Save the selected image to the phone storage and start sharing intent
     public void share() {
         try {
             File sdCard = Environment.getExternalStorageDirectory();
@@ -122,6 +126,7 @@ public class DetailFragment extends Fragment {
         }
     }
 
+    // Start intent to choose application to share image
     private void startSharingIntent(String imagePath,String text) {
 
         Intent share = new Intent(Intent.ACTION_SEND);
@@ -132,6 +137,7 @@ public class DetailFragment extends Fragment {
         startActivity(Intent.createChooser(share, "Share Image"));
     }
 
+    // Show a blank detail fragment when no product is selected
     public void showDefaultFragment() {
         default_container.setVisibility(View.VISIBLE);
         description_container.setVisibility(View.GONE);

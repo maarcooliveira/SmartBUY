@@ -8,13 +8,14 @@ import java.util.ArrayList;
 
 /**
  * Created by marco on 1/18/16.
+ *
+ * Class to parse a JSON string received from the API to an ArrayList<Product>
  */
 public class JSONParser {
 
     Integer pages;
     Integer current_page;
 
-    /* Main parsing method */
     public ArrayList<Product> parseJSONData(String jsonStr) throws JSONException {
 
         final String PRODUCTS = "products";
@@ -46,6 +47,8 @@ public class JSONParser {
         for(int i = 0; i < jsonProductList.length(); i++) {
             JSONObject jsonProduct = jsonProductList.getJSONObject(i);
 
+            /* By default, BestBuy puts the manufacturer name before the product name in the "name"
+             * field. The manufacturer is removed to show a cleaner interface */
             String name = jsonProduct.getString(NAME);
             String manufacturer = jsonProduct.getString(MANUFACTURER);
             String manufacturer_in_name = manufacturer + " - ";

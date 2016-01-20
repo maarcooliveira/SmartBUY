@@ -14,6 +14,7 @@ import com.koushikdutta.ion.Ion;
 import java.util.ArrayList;
 
 /**
+ * SmartBUY project
  * Created by marco on 1/18/16.
  */
 public class ProductAdapter extends ArrayAdapter<Product> {
@@ -36,9 +37,9 @@ public class ProductAdapter extends ArrayAdapter<Product> {
         TextView name = (TextView) rowView.findViewById(R.id.product_list_name);
         TextView manufacturer = (TextView) rowView.findViewById(R.id.product_list_manufacturer);
         TextView price = (TextView) rowView.findViewById(R.id.product_list_price);
-        View selected = (View) rowView.findViewById(R.id.product_list_selected);
+        View selected = rowView.findViewById(R.id.product_list_selected);
 
-        // Ion lib for image download and cache https://github.com/koush/ion
+        // Ion lib for image download and cache - https://github.com/koush/ion
         Ion.with(image)
                 .placeholder(R.mipmap.smartphone)
                 .error(R.mipmap.smartphone)

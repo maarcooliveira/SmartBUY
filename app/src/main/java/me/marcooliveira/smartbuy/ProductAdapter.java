@@ -1,6 +1,7 @@
 package me.marcooliveira.smartbuy;
 
 import android.app.Activity;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,8 @@ import java.util.ArrayList;
 public class ProductAdapter extends ArrayAdapter<Product> {
     private Activity context;
     private ArrayList<Product> data;
+    private View lastSelected;
+    private int lastSelectedIdx = -1;
 
     public ProductAdapter(Activity context, ArrayList<Product> data) {
         super(context, R.layout.list_item, data);
@@ -33,6 +36,7 @@ public class ProductAdapter extends ArrayAdapter<Product> {
         TextView name = (TextView) rowView.findViewById(R.id.product_list_name);
         TextView manufacturer = (TextView) rowView.findViewById(R.id.product_list_manufacturer);
         TextView price = (TextView) rowView.findViewById(R.id.product_list_price);
+        View selected = (View) rowView.findViewById(R.id.product_list_selected);
 
         // Ion lib for image download and cache https://github.com/koush/ion
         Ion.with(image)
@@ -44,6 +48,25 @@ public class ProductAdapter extends ArrayAdapter<Product> {
         manufacturer.setText(data.get(position).getManufacturer());
         price.setText("$" + data.get(position).getSalePrice().toString());
 
+        if (lastSelectedIdx == position) {
+            selected.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
+        }
+        else {
+            selected.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.transparent));
+        }
+
         return rowView;
+    }
+
+    public void setLastSelected(View v) {
+        this.lastSelected = v;
+    }
+
+    public View getLastSelected() {
+        return lastSelected;
+    }
+
+    public void setLastSelectedIdx(int idx) {
+        this.lastSelectedIdx = idx;
     }
 }

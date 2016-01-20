@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="me.marcooliveira.smartbuy.MainActivity">
 
 
@@ -24,6 +25,10 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             tools:layout="@layout/fragment_main" />
 
+        <View
+            android:layout_width="1dp"
+            android:layout_height="fill_parent"
+            android:background="#dfdfdf" />
 
         <fragment
             android:id="@+id/details_fragment"

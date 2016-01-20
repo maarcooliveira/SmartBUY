@@ -14,8 +14,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import org.json.JSONException;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,15 +40,6 @@ public class MainActivity extends AppCompatActivity {
 
         snackbarCoordinator = (CoordinatorLayout)findViewById(R.id.snackbar_coordinator);
 
-        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                GetList updater = new GetList();
-                updater.execute("1");
-            }
-        });
-
         fab = (FloatingActionButton) findViewById(R.id.share_fab);
         if (fab != null) {
             fab.setVisibility(View.GONE);
@@ -58,8 +47,19 @@ public class MainActivity extends AppCompatActivity {
 
         detailFragment = (DetailFragment) getFragmentManager().findFragmentById(R.id.details_fragment);
 
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                GetList updater = new GetList();
+                updater.execute("1");
+                if (detailFragment != null)
+                    detailFragment.showDefaultFragment();
+            }
+        });
+
         final ArrayList<Product> products = new ArrayList<>();
-        ListView productList = (ListView) findViewById(R.id.product_list_view);
+        final ListView productList = (ListView) findViewById(R.id.product_list_view);
         productAdapter = new ProductAdapter(this, products);
         productList.setAdapter(productAdapter);
 
@@ -76,6 +76,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Product p = (Product) parent.getItemAtPosition(position);
+
+                View lastSelected = productAdapter.getLastSelected();
+                productAdapter.setLastSelected(view);
+                productAdapter.setLastSelectedIdx(position);
+
+//                Log.d("ALOALOALO"));
+
+                if (lastSelected != null) {
+                    lastSelected.findViewById(R.id.product_list_selected).setBackgroundColor(getResources().getColor(R.color.transparent));
+                }
+                View selected = view.findViewById(R.id.product_list_selected);
+                selected.setBackgroundColor(getResources().getColor(R.color.colorAccent));
 
                 if (detailFragment == null || !detailFragment.isInLayout()) {
                     Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
@@ -203,14 +215,9 @@ public class MainActivity extends AppCompatActivity {
                 JSONParser parser = new JSONParser();
                 response = parser.parseJSONData(jsonResponse);
 
-            } catch (IOException e) {
+            } catch (Exception e) {
                 Log.e("SmartBUY", "Error parsing the data", e);
                 return null;
-
-            } catch (JSONException e) {
-                Log.e("SmartBUY", "Error parsing the data", e);
-                return null;
-
             } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();

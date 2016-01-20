@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
@@ -34,6 +35,8 @@ public class DetailFragment extends Fragment {
     TextView weight;
     ImageView image;
     Dialog dialog;
+    RelativeLayout description_container;
+    RelativeLayout default_container;
 
     Product p;
     PhotoViewAttacher mAttacher;
@@ -55,10 +58,17 @@ public class DetailFragment extends Fragment {
         weight = (TextView) view.findViewById(R.id.product_detail_weight);
         image = (ImageView) view.findViewById(R.id.product_detail_image);
 
+        description_container = (RelativeLayout) view.findViewById(R.id.description_container);
+        default_container = (RelativeLayout) view.findViewById(R.id.default_container);
+        description_container.setVisibility(View.GONE);
+
         return view;
     }
 
     public void updateInfo(Product product) {
+        description_container.setVisibility(View.VISIBLE);
+        default_container.setVisibility(View.GONE);
+
         name.setText(product.getName());
         manufacturer.setText("by " + product.getManufacturer());
         price.setText("$" + product.getSalePrice().toString());
@@ -105,7 +115,7 @@ public class DetailFragment extends Fragment {
             FileOutputStream fos = new FileOutputStream(file);
             Bitmap bitmap = Ion.with(image).getBitmap();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 95, fos);
-            startSharingIntent(file.getPath(),"Hey, look what I found with SmartBUY!");
+            startSharingIntent(file.getPath(), "Hey, look what I found with SmartBUY!");
         }
         catch(Exception e) {
             Log.d("SmartBUY", e.toString());
@@ -120,5 +130,10 @@ public class DetailFragment extends Fragment {
         share.putExtra(Intent.EXTRA_SUBJECT, text);
         share.putExtra(Intent.EXTRA_TEXT,text);
         startActivity(Intent.createChooser(share, "Share Image"));
+    }
+
+    public void showDefaultFragment() {
+        default_container.setVisibility(View.VISIBLE);
+        description_container.setVisibility(View.GONE);
     }
 }

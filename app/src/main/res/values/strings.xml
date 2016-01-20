@@ -8,4 +8,6 @@
     <string name="width">Width</string>
     <string name="height">Height</string>
     <string name="weight">Weight</string>
+    <string name="loading">Loading data</string>
+    <string name="error">Connection error</string>
 </resources>

@@ -1,10 +1,11 @@
 package me.marcooliveira.smartbuy;
 
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -12,7 +13,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import org.json.JSONException;
 
@@ -26,11 +26,11 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    FragmentManager fm = getFragmentManager();
     ProductAdapter productAdapter;
     DetailFragment detailFragment;
     FloatingActionButton fab;
     SwipeRefreshLayout swipeContainer;
+    CoordinatorLayout snackbarCoordinator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,12 +40,14 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        snackbarCoordinator = (CoordinatorLayout)findViewById(R.id.snackbar_coordinator);
+
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 GetList updater = new GetList();
-                updater.execute();
+                updater.execute("1");
             }
         });
 
@@ -60,6 +62,14 @@ public class MainActivity extends AppCompatActivity {
         ListView productList = (ListView) findViewById(R.id.product_list_view);
         productAdapter = new ProductAdapter(this, products);
         productList.setAdapter(productAdapter);
+
+        productList.setOnScrollListener(new InfiniteScrollListener(5) {
+            @Override
+            public void loadMore(int page, int totalItemsCount) {
+                GetList updater = new GetList();
+                updater.execute(String.valueOf(page));
+            }
+        });
 
         productList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -83,9 +93,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
         swipeContainer.setRefreshing(true);
         GetList updater = new GetList();
-        updater.execute();
+        updater.execute("1");
     }
 
 
@@ -95,20 +106,31 @@ public class MainActivity extends AppCompatActivity {
 
 
     public class GetList extends AsyncTask<String, Void, ArrayList<Product>> {
+        boolean isUpdate = false;
+        Snackbar snack_update;
 
         @Override
         protected void onPostExecute(ArrayList<Product> products) {
 
+            snack_update.dismiss();
+
             if(products != null){
-                productAdapter.clear();
+                if (isUpdate)
+                    productAdapter.clear();
                 for(int i = 0; i < products.size(); i++){
                     productAdapter.add(products.get(i));
                 }
             }
             else{
-                //TODO: use a Snackbar instead
-                Toast.makeText(getApplicationContext(), "Couldn't load. Try again later.",
-                        Toast.LENGTH_LONG).show();
+                Snackbar snackbar = Snackbar.make(snackbarCoordinator, getResources().getString(R.string.error), Snackbar.LENGTH_INDEFINITE);
+                snackbar.setAction("REFRESH", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        GetList updater = new GetList();
+                        updater.execute("1");
+                    }
+                });
+                snackbar.show();
             }
             swipeContainer.setRefreshing(false);
         }
@@ -116,13 +138,16 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected ArrayList<Product> doInBackground(String... params) {
+            if (params[0].equals("1")) {
+                isUpdate = true;
+            }
 
             String baseUrl = "http://api.bestbuy.com/v1/products";
             String categories = "pcmcat209400050001,pcmcat156400050037";
             String show = "name,manufacturer,longDescription,sku,salePrice,regularPrice,image," +
                     "largeImage,url,customerReviewAverage,height,width,weight";
             String pageSize = "15";
-            String pageNumber = "1";
+            String pageNumber = params[0];
             String format = "json";
             String apiKey = "ujp4vduqppje2d6qvegh2hzz";
             ArrayList<Product> response;
@@ -130,6 +155,15 @@ public class MainActivity extends AppCompatActivity {
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
             String jsonResponse = null;
+
+            snack_update = Snackbar.make(snackbarCoordinator, getResources().getString(R.string.loading), Snackbar.LENGTH_SHORT);
+            snack_update.setAction("OK", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    snack_update.dismiss();
+                }
+            });
+            snack_update.show();
 
             try {
 

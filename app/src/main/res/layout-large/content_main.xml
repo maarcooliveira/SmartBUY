@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="me.marcooliveira.smartbuy.MainActivity">
+    tools:context="me.marcooliveira.smartbuy.activity.MainActivity">
 
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -18,7 +18,7 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/fragment"
-            android:name="me.marcooliveira.smartbuy.MainActivityFragment"
+            android:name="me.marcooliveira.smartbuy.fragments.MainActivityFragment"
             android:layout_width="0dp"
             android:layout_weight="2"
             android:layout_height="match_parent"
@@ -32,7 +32,7 @@
 
         <fragment
             android:id="@+id/details_fragment"
-            android:name="me.marcooliveira.smartbuy.DetailFragment"
+            android:name="me.marcooliveira.smartbuy.fragments.DetailFragment_"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="3"
